@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Noise & Filtering Simulator — Faithful Web Edition</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#061326;--panel:#0b203b;--panel2:#0e2949;--line:#1b4168;--text:#e8f2ff;--muted:#9bb8dc;--blue:#168cff;--cyan:#19d3f3;--green:#35e58d;--red:#ff4668;--purple:#9562ff;--orange:#ffb347}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% 0%,#102d50 0%,var(--bg) 48%);font:14px/1.45 Inter,Segoe UI,Arial,sans-serif;color:var(--text)}
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:19px 26px;border-bottom:1px solid var(--line);background:#071a30dd}
+.brand{display:flex;gap:13px;align-items:center}.logo{font-size:35px;color:var(--cyan)}h1{font-size:21px;margin:0}.subtitle{margin:3px 0 0;color:var(--muted)}.tag{border:1px solid #245078;border-radius:99px;padding:8px 12px;color:#cce4ff;white-space:nowrap}.tag i{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:7px}
+.layout{display:grid;grid-template-columns:285px minmax(0,1fr);gap:17px;padding:17px;max-width:1800px;margin:auto}.panel{background:linear-gradient(145deg,#0c2441f2,#081b31f2);border:1px solid var(--line);border-radius:13px;box-shadow:0 12px 30px #0002}.controls{padding:15px;height:max-content}.section{padding-bottom:15px;margin-bottom:14px;border-bottom:1px solid #183956}.section:last-of-type{border:0;margin-bottom:7px}.section h3{font-size:13px;margin:0 0 12px;color:#d6e9ff}.field{margin:11px 0}.field-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px}.field label{color:#c7dcf6}.value{font-variant-numeric:tabular-nums;color:white;background:#07182b;border:1px solid #28527b;border-radius:7px;padding:3px 7px;min-width:56px;text-align:center}input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}select{width:100%;padding:9px;border-radius:8px;background:#07182b;color:var(--text);border:1px solid #2a5279}.small{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}.btn{border:0;border-radius:9px;padding:11px 13px;font-weight:700;color:white;background:linear-gradient(100deg,#168cff,#7149ff);cursor:pointer;width:100%}.btn.secondary{background:#12365a;border:1px solid #2a5b85;margin-top:8px}.check{display:flex;align-items:center;gap:8px;color:#c7dcf6;margin:9px 0}.check input{accent-color:var(--blue)}
+.main{min-width:0}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}.metric{padding:15px;min-height:100px}.label{color:var(--muted);font-size:12px}.number{font-size:23px;font-weight:750;margin:5px 0}.hint{font-size:11px;color:var(--muted)}.blue{color:var(--cyan)}.green{color:var(--green)}.purple{color:#b7a0ff}.orange{color:var(--orange)}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:13px}.charts{overflow:hidden}.chart-card{padding:12px 14px 9px;border-bottom:1px solid #173653}.chart-card:last-child{border-bottom:0}.chart-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}.chart-head strong{font-size:12px}.chart-head span{font-size:11px;color:var(--muted)}.chart-wrap{height:145px;position:relative}.right{display:flex;flex-direction:column;gap:12px}.side-card{padding:14px}.side-card h3{font-size:13px;margin:0 0 10px}.setting-row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #183956;color:#c6ddf7;font-size:12px}.setting-row:last-child{border:0}.setting-row b{font-weight:600;color:#f1f7ff;text-align:right}.progress{height:8px;border-radius:20px;background:#1b3d61;overflow:hidden;margin:9px 0}.progress div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .3s}.insight{font-size:12px;color:#c5ddfa;margin:7px 0}.insight:before{content:"✓";color:var(--green);font-weight:bold;margin-right:8px}.tip{background:linear-gradient(145deg,#24236b,#172752);border-color:#4a48ad}.tip p{font-size:12px;color:#d6dcff;margin:0}.formula-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:13px}.formula{padding:12px}.formula strong{font-size:12px;display:block;margin-bottom:5px}.formula p{font-size:11px;color:var(--muted);margin:0}.warning{color:#ffbf6b;font-size:12px;margin-top:8px}.footer{text-align:center;color:#7595bb;font-size:11px;padding:16px;border-top:1px solid var(--line);margin-top:15px}
+@media(max-width:1100px){.layout{grid-template-columns:260px minmax(0,1fr)}.workspace{grid-template-columns:1fr}.right{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.formula-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){header{padding:14px;align-items:flex-start}.brand h1{font-size:17px}.subtitle{font-size:12px}.tag{display:none}.layout{grid-template-columns:1fr;padding:11px}.controls{order:2}.main{order:1}.metrics{gap:8px}.metric{padding:11px}.number{font-size:20px}.right{grid-template-columns:1fr}.chart-wrap{height:140px}.formula-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">∿</div><div><h1>Signal Noise & Filtering Simulator</h1><p class="subtitle">Your Java simulation logic, redesigned for the web.</p></div></div><div class="tag"><i></i> Faithful logic edition</div></header>
+<div class="layout">
+<aside class="panel controls">
+<div class="section"><h3>⚙ Signal parameters</h3>
+<div class="field"><div class="field-top"><label for="freq">Frequency (Hz)</label><output class="value" id="freqVal">5</output></div><input id="freq" type="range" min="1" max="20" step="1" value="5"><div class="small"><span>1 Hz</span><span id="freqMax">20 Hz</span></div></div>
+<div class="field"><div class="field-top"><label for="amp">Amplitude (V)</label><output class="value" id="ampVal">1.0</output></div><input id="amp" type="range" min="1" max="50" step="1" value="10"><div class="small"><span>0.1 V</span><span>5.0 V</span></div></div>
+<div class="field"><div class="field-top"><label for="duration">Duration (s)</label><output class="value" id="durationVal">1.0</output></div><input id="duration" type="range" min="5" max="50" step="1" value="10"><div class="small"><span>0.5 s</span><span>5.0 s</span></div></div>
+<div class="field"><div class="field-top"><label for="fs">Sampling rate (Hz)</label><output class="value" id="fsVal">500</output></div><input id="fs" type="range" min="100" max="2000" step="100" value="500"><div class="small"><span>100 Hz</span><span>2000 Hz</span></div></div>
+</div>
+<div class="section"><h3>〰 Noise parameters</h3><div class="field"><div class="field-top"><label for="noise">Noise level (±V)</label><output class="value" id="noiseVal">0.60</output></div><input id="noise" type="range" min="0" max="100" step="1" value="30"><div class="small"><span>0 V</span><span>2.0 V</span></div></div><button class="btn secondary" id="newNoise">⤨ Generate new noise</button></div>
+<div class="section"><h3>⚑ Filter settings</h3><div class="field"><label for="filter">Filter type</label><select id="filter"><option value="moving">Moving Average</option><option value="median">Median</option></select></div><div class="field"><div class="field-top"><label for="window">Filter window</label><output class="value" id="windowVal">7 samples</output></div><input id="window" type="range" min="1" max="16" step="1" value="4"><div class="small"><span>1 sample</span><span>31 samples</span></div></div><label class="check"><input type="checkbox" id="edges"> Include edge samples in SNR</label></div>
+<div class="section"><h3>◉ Display options</h3><label class="check"><input type="checkbox" id="grid" checked> Show chart grid</label><label class="check"><input type="checkbox" id="showOriginal" checked> Show original signal</label></div>
+<button class="btn" id="run">▶ Run simulation</button><button class="btn secondary" id="reset">↺ Reset defaults</button>
+</aside>
+<main class="main">
+<div class="metrics">
+<div class="panel metric"><div class="label">SNR before filtering</div><div class="number blue" id="snrBefore">— dB</div><div class="hint">Noisy signal</div></div>
+<div class="panel metric"><div class="label">SNR after filtering</div><div class="number green" id="snrAfter">— dB</div><div class="hint">Filtered signal</div></div>
+<div class="panel metric"><div class="label">SNR improvement</div><div class="number purple" id="improve">— dB</div><div class="hint">After − before</div></div>
+<div class="panel metric"><div class="label">Clean-signal gain</div><div class="number orange" id="gain">—</div><div class="hint">Filter effect on clean signal</div></div>
+</div>
+<div class="workspace">
+<div class="panel charts">
+<div class="chart-card" id="originalCard"><div class="chart-head"><strong class="blue">● 1. Original signal (clean)</strong><span id="originalMeta">Freq: 5 Hz · Amp: 1.0 V</span></div><div class="chart-wrap"><canvas id="originalChart"></canvas></div></div>
+<div class="chart-card"><div class="chart-head"><strong style="color:var(--red)">● 2. Noisy signal</strong><span id="noisyMeta">Noise: ±0.60 V</span></div><div class="chart-wrap"><canvas id="noisyChart"></canvas></div></div>
+<div class="chart-card"><div class="chart-head"><strong class="green">● 3. Filtered signal</strong><span id="filteredMeta">Moving Average · Window 7</span></div><div class="chart-wrap"><canvas id="filteredChart"></canvas></div></div>
+</div>
+<div class="right">
+<div class="panel side-card"><h3>▣ Signal & filter settings</h3><div class="setting-row"><span>Frequency</span><b id="sFreq">5 Hz</b></div><div class="setting-row"><span>Amplitude</span><b id="sAmp">1.0 V</b></div><div class="setting-row"><span>Noise level</span><b id="sNoise">±0.60 V</b></div><div class="setting-row"><span>Sampling rate</span><b id="sFs">500 Hz</b></div><div class="setting-row"><span>Duration</span><b id="sDuration">1.0 s</b></div><div class="setting-row"><span>Filter type</span><b id="sFilter">Moving Average</b></div><div class="setting-row"><span>Window size</span><b id="sWindow">7 samples</b></div><div class="setting-row"><span>Number of samples</span><b id="sSamples">500</b></div></div>
+<div class="panel side-card"><h3>↗ Filter effect on clean signal</h3><div class="setting-row"><span>Signal gain</span><b id="gainSide">—</b></div><div class="progress"><div id="gainBar" style="width:0%"></div></div><div class="hint">Same metric as the Java program: apply the selected filter to the clean signal.</div><div class="warning" id="warning"></div></div>
+<div class="panel side-card"><h3>💡 Quick insights</h3><div id="insights"><p class="insight">Run the simulation to see results.</p></div></div>
+<div class="panel side-card tip"><h3>ⓘ Try this</h3><p>Increase the noise level and compare the noisy and filtered signals. A larger filter window smooths more samples but can also change the wanted signal.</p></div>
+</div></div>
+<div class="formula-grid"><div class="panel formula"><strong class="blue">∿ Sine-wave generation</strong><p>x[n] = A sin(2πfn/fs)<br>A = amplitude; f = frequency</p></div><div class="panel formula"><strong style="color:var(--red)">〰 Additive uniform noise</strong><p>noisy[n] = original[n] + level × noise[n]<br>noise is in [−1, +1].</p></div><div class="panel formula"><strong class="green">⚑ Digital filters</strong><p>Centered moving average or median, with truncated edge windows.</p></div><div class="panel formula"><strong class="purple">⌁ SNR calculation</strong><p>SNR = 10 log₁₀(Σsignal² / Σerror²), in dB.</p></div></div>
+</main></div>
+<div class="footer">Signal Noise & Filtering Simulator · HTML, CSS, JavaScript & Chart.js · Educational project</div>
+<script>
+const $=id=>document.getElementById(id);let charts={},noiseSeed=Math.random()*100000;
+function p(){return {f:+$('freq').value,A:+$('amp').value/10,nl:+$('noise').value/50,w:2*(+$('window').value)-1,fs:+$('fs').value,d:+$('duration').value/10,filter:$('filter').value,edges:$('edges').checked}}
+function filterName(v){return v==='moving'?'Moving Average':'Median'}
+function chart(id,color,label){return new Chart($(id),{type:'line',data:{datasets:[{label,data:[],borderColor:color,borderWidth:1.7,pointRadius:0,tension:0}]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:a=>`Time: ${a[0].parsed.x.toFixed(4)} s`,label:a=>`Amplitude: ${a.parsed.y.toFixed(4)} V`}}},scales:{x:{type:'linear',title:{display:true,text:'Time (s)',color:'#a8c5e8'},ticks:{color:'#9bb8dc',maxTicksLimit:7},grid:{color:'#173653'},border:{color:'#315779'}},y:{title:{display:true,text:'Amplitude (V)',color:'#a8c5e8'},ticks:{color:'#9bb8dc',maxTicksLimit:5},grid:{color:'#173653'},border:{color:'#315779'}}}}})}
+function applyFilter(input,w,type){const out=new Array(input.length),h=Math.floor(w/2);for(let i=0;i<input.length;i++){const lo=Math.max(0,i-h),hi=Math.min(input.length-1,i+h);if(type==='moving'){let sum=0,cnt=0;for(let k=lo;k<=hi;k++){sum+=input[k];cnt++}out[i]=sum/cnt}else{const win=input.slice(lo,hi+1).sort((a,b)=>a-b);out[i]=win[Math.floor(win.length/2)]}}return out}
+function metrics(ref,test,skip){let sig=0,err=0;for(let i=skip;i<ref.length-skip;i++){sig+=ref[i]*ref[i];const d=test[i]-ref[i];err+=d*d}if(err===0)return Infinity;return 10*Math.log10(sig/err)}
+function signalGain(ref,out,skip){let num=0,den=0;for(let i=skip;i<ref.length-skip;i++){num+=out[i]*ref[i];den+=ref[i]*ref[i]}return den===0?1:num/den}
+function fmt(v){return v===Infinity?'∞ dB':v===-Infinity?'−∞ dB':v.toFixed(2)+' dB'}
+function put(ch,t,data,grid){ch.data.datasets[0].data=t.map((x,i)=>({x,y:data[i]}));ch.options.scales.x.grid.display=grid;ch.options.scales.y.grid.display=grid;ch.update('none')}
+function run(){const q=p(),n=Math.round(q.fs*q.d),t=[],orig=[],noise=[],noisy=[];let seed=noiseSeed;function random(){seed=(seed*9301+49297)%233280;return seed/233280}
+for(let i=0;i<n;i++){t.push(i/q.fs);orig.push(q.A*Math.sin(2*Math.PI*q.f*i/q.fs));noise.push(random()*2-1)}
+for(let i=0;i<n;i++)noisy.push(orig[i]+q.nl*noise[i]);
+const filtered=applyFilter(noisy,q.w,q.filter),cleanFiltered=applyFilter(orig,q.w,q.filter),skip=q.edges?0:15,before=metrics(orig,noisy,skip),after=metrics(orig,filtered,skip),gain=signalGain(orig,cleanFiltered,15),improvement=after-before,grid=$('grid').checked;
+if(!charts.originalChart){charts.originalChart=chart('originalChart','#168cff','Original');charts.noisyChart=chart('noisyChart','#ff4668','Noisy');charts.filteredChart=chart('filteredChart','#35e58d','Filtered')}
+put(charts.originalChart,t,orig,grid);put(charts.noisyChart,t,noisy,grid);put(charts.filteredChart,t,filtered,grid);
+$('originalCard').style.display=$('showOriginal').checked?'':'none';
+$('snrBefore').textContent=fmt(before);$('snrAfter').textContent=fmt(after);$('improve').textContent=Number.isFinite(improvement)?(improvement>=0?'+':'')+improvement.toFixed(2)+' dB':'—';$('gain').textContent=gain.toFixed(2);$('gainSide').textContent=gain.toFixed(2);
+$('gainBar').style.width=Math.max(0,Math.min(100,gain*100))+'%';
+$('originalMeta').textContent=`Freq: ${q.f} Hz · Amp: ${q.A.toFixed(1)} V`;$('noisyMeta').textContent=`Noise: ±${q.nl.toFixed(2)} V`;$('filteredMeta').textContent=`${filterName(q.filter)} · Window ${q.w}`;
+$('sFreq').textContent=q.f+' Hz';$('sAmp').textContent=q.A.toFixed(1)+' V';$('sNoise').textContent='±'+q.nl.toFixed(2)+' V';$('sFs').textContent=q.fs+' Hz';$('sDuration').textContent=q.d.toFixed(1)+' s';$('sFilter').textContent=filterName(q.filter);$('sWindow').textContent=q.w+' samples';$('sSamples').textContent=n;
+const warning=$('warning');if(gain<0)warning.textContent=`Warning: filter inverts the signal (gain ${(gain*100).toFixed(0)}%).`;else if(gain<.9)warning.textContent=`Warning: filter keeps only ${(gain*100).toFixed(0)}% of the signal amplitude.`;else warning.textContent='';
+let msgs=[];msgs.push(after>before?`SNR improved by ${(after-before).toFixed(2)} dB.`:`SNR improvement is ${(after-before).toFixed(2)} dB; try a different window size.`);msgs.push(`The clean-signal gain is ${gain.toFixed(2)}.`);msgs.push(q.nl===0?'Noise level is zero.':q.w===1?'Window size 1 means no filtering is applied.':`The ${q.w}-sample ${filterName(q.filter).toLowerCase()} uses a centered window; edge windows are shortened.`);$('insights').innerHTML=msgs.map(s=>`<p class="insight">${s}</p>`).join('');
+}
+function labels(){ $('freqVal').textContent=$('freq').value;$('ampVal').textContent=(+$('amp').value/10).toFixed(1);$('durationVal').textContent=(+$('duration').value/10).toFixed(1);$('fsVal').textContent=$('fs').value;$('noiseVal').textContent=(+$('noise').value/50).toFixed(2);$('windowVal').textContent=(2*(+$('window').value)-1)+' samples'}
+function updateFreqRange(){const max=Math.max(1,Math.floor(+$('fs').value/25));$('freq').max=max;if(+$('freq').value>max)$('freq').value=max;$('freqMax').textContent=max+' Hz'}
+['freq','amp','duration','fs','noise','window','filter','edges','grid','showOriginal'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='fs')updateFreqRange();labels();run()}));
+$('newNoise').onclick=()=>{noiseSeed=Math.random()*100000;run()};$('run').onclick=()=>{noiseSeed=Math.random()*100000;run()};
+$('reset').onclick=()=>{Object.entries({freq:5,amp:10,duration:10,fs:500,noise:30,window:4,filter:'moving',edges:false,grid:true,showOriginal:true}).forEach(([id,v])=>$(id).type==='checkbox'?$(id).checked=v:$(id).value=v);updateFreqRange();labels();noiseSeed=Math.random()*100000;run()};
+updateFreqRange();labels();run();
+</script>
+</body>
+</html>
