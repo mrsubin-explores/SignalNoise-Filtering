@@ -23,8 +23,9 @@ The simulator displays the original, noisy, and filtered signals through graphic
 
 ## Screenshots
 
-(screenshots/simulator(1).png)
-(screenshots/simulator(2).png)
+screenshots/simulator%281%29.png
+
+screenshots/simulator%282%29.png
 
 ## Filtering Techniques
 
