@@ -21,6 +21,11 @@ The simulator displays the original, noisy, and filtered signals through graphic
 - SNR calculation before and after filtering
 - Interactive user controls
 
+## Screenshots
+
+(screenshots/simulator(1).png)
+(screenshots/simulator(2).png)
+
 ## Filtering Techniques
 
 **1. Moving Average Filter**
