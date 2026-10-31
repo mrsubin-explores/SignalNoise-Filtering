@@ -23,9 +23,11 @@ The simulator displays the original, noisy, and filtered signals through graphic
 
 ## Screenshots
 
-screenshots/simulator%281%29.png
+### Main Simulator
+![Main Simulator](screenshots/simulator%281%29.png)
 
-screenshots/simulator%282%29.png
+### Filtering Comparison
+![Noise Adjustment](screenshots/simulator%282%29.png)
 
 ## Filtering Techniques
 
